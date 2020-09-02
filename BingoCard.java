@@ -5,8 +5,8 @@ import java.util.Random;
 
 public class BingoCard {
 
-    static int cardRow=5;//カードのヨコ数
-    static int cardCol=5;//カードのタテ数
+    // static int cardRow=5;//カードのヨコ数
+    // static int cardCol=5;//カードのタテ数
     static int bingoMaxNum=75;//カードの最大値
     static String outMark="●";
     static final int OUTNUM=0;//穴が空いているしるしの数
@@ -26,10 +26,15 @@ public class BingoCard {
     static int[] colP5={20,21,22,23,24};
 
 
-    int[] bingoCard = new int[cardCol*cardRow];
+    int[] bingoCard = new int[25];
     int reach;//リーチの数
     int bingo;//ビンゴの数
     String name;//プレイヤー名
+    private int bingoRound;//Bingoしたラウンド
+
+    public int getBingoRound() {
+        return this.bingoRound;
+    }
 
     BingoCard(){
         this("player");
@@ -39,11 +44,10 @@ public class BingoCard {
         reach=0;
         bingo=0;
         this.name=name;
-        int colNum=bingoMaxNum/cardCol;//１列にいくつ数字が入るか
-        for(int i=0;i<cardCol;i++){
-            ArrayList<Integer> tempCol= makeTmpArray((i*colNum)+1,(i+1)*colNum);
-            for( int j =0;j<cardRow;j++){
-                bingoCard[j+cardRow*(i)]=tempCol.get(j);
+        for(int i=0;i<5;i++){
+            ArrayList<Integer> tempCol= makeTmpArray((i*15)+1,(i+1)*15);
+            for( int j =0;j<5;j++){
+                bingoCard[j+5*(i)]=tempCol.get(j);
             }
         }
     //12番目だけ穴をあける
@@ -70,9 +74,11 @@ public class BingoCard {
 
     /**
      * ビンゴカードを表示する
-     * @param bingoCard
+     * @param statusPrint trueだったら、リーチとビンゴ数を表示する
      */
-    public void printCard() {
+    public void printCard(boolean statusPrint) {
+    // System.out.println(" -------------------------");    
+    System.out.printf( "  player名:%10s\n",name);
 
     System.out.println(" -------------------------");
     System.out.println(" |    B   I   N   G   O   |");
@@ -86,16 +92,14 @@ public class BingoCard {
     }else{
     System.out.printf("%2d",bingoCard[j+i*5]);
     }
-    // System.out.printf("%2d",bingoCard[j+i*5]);
     System.out.print(" | ");
     }
     System.out.println();
     }
 
     System.out.println(" -------------------------");
-    System.out.printf( "player:%10s\n",name);
-    System.out.printf(" リーチ：%d ビンゴ：%d\n",this.reach,this.bingo);
-    System.out.println(" -------------------------");
+    if(statusPrint){System.out.printf(" リーチ：%d ビンゴ：%d\n\n",this.reach,this.bingo);}
+
 
     }
 
@@ -115,22 +119,23 @@ public class BingoCard {
 
     /**
      * ビンゴカードをチェックする
+     * @param round ビンゴのラウンド
      */
-    void checkBingo(){
+    void checkBingo( int round){
         reach=0;
         bingo=0;
-        holeCount(slantP1);
-        holeCount(slantP2);
-        holeCount(rowP1);
-        holeCount(rowP2);
-        holeCount(rowP3);
-        holeCount(rowP4);
-        holeCount(rowP5);
-        holeCount(colP1);
-        holeCount(colP2);
-        holeCount(colP3);
-        holeCount(colP4);
-        holeCount(colP5);
+        holeCount(round,slantP1);
+        holeCount(round,slantP2);
+        holeCount(round,rowP1);
+        holeCount(round,rowP2);
+        holeCount(round,rowP3);
+        holeCount(round,rowP4);
+        holeCount(round,rowP5);
+        holeCount(round,colP1);
+        holeCount(round,colP2);
+        holeCount(round,colP3);
+        holeCount(round,colP4);
+        holeCount(round,colP5);
         
     }
 
@@ -139,7 +144,7 @@ public class BingoCard {
      * 与えられたパターンの穴を数えて、リーチとビンゴをカウントする
      * @param intArray
      */
-    private void holeCount(int[] intArray){
+    private void holeCount(int round,int[] intArray){
         int count=0;//空いた穴の数
         for(int value:intArray){
             if(bingoCard[value]==OUTNUM){
@@ -149,6 +154,7 @@ public class BingoCard {
         if(count==4){
             this.reach++;
         }else if(count==5){
+            this.bingoRound=round;
             this.bingo++;
         }
     }

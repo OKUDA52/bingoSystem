@@ -3,9 +3,13 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class BingoMachine {
-    int round;// ゲームカウント
+    private int round;// ゲームカウント
     static final int maxRound = 75;
     ArrayList<Integer> bingoMachine;// 発表する玉の配列
+
+    public int getRound() {
+        return this.round;
+    }
 
     BingoMachine() {
         round = 0;
@@ -22,10 +26,11 @@ public class BingoMachine {
      * @return 出た玉の番号
      */
     int callBingoNumber() {
-if(round<maxRound){
-        int num = bingoMachine.get(this.round);
-        this.round++;
-        return num;}else{
+        if (round < maxRound) {
+            int num = bingoMachine.get(this.round);
+            this.round++;
+            return num;
+        } else {
             return -1;
         }
     }
